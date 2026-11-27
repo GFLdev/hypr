@@ -56,6 +56,7 @@ hl.monitor({
 local terminal    = "kitty"
 local fileManager = "kitty nnn"
 local menu        = "hyprlauncher"
+local locker      = "pgrep -x hyprlock >/dev/null || hyprlock" -- config in hyprlock.conf
 
 -- Workspace names, shared by both monitors, and each monitor's first ID - 1
 local wsNames  = { "term", "code", "web", "chat", "misc" }
@@ -397,6 +398,7 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Extras with no dwm counterpart (none clash with the binds above)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(locker))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("hyprctl reload"))
 
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

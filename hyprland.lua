@@ -95,6 +95,19 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("pgrep -x hyprpaper >/dev/null || hyprpaper")
 end)
 
+-- Polkit agent, asks for the password when an app needs root (styled by hyprtoolkit.conf).
+-- No logind here: the agent only reads the session from XDG_SESSION_ID, so take it
+-- from ConsoleKit2. Needs Hyprland started with `ck-launch-session start-hyprland`.
+hl.on("hyprland.start", function ()
+    hl.exec_cmd([[
+        pgrep -x hyprpolkitagent >/dev/null && exit
+        session=$(echo $(dbus-send --system --print-reply=literal \
+            --dest=org.freedesktop.ConsoleKit /org/freedesktop/ConsoleKit/Manager \
+            org.freedesktop.ConsoleKit.Manager.GetCurrentSession))
+        XDG_SESSION_ID=${session##*/} exec /usr/local/libexec/hyprpolkitagent
+    ]])
+end)
+
 -- Lock the screen when idle (config in hypridle.conf)
 hl.on("hyprland.start", function ()
     hl.exec_cmd("pgrep -x hypridle >/dev/null || hypridle")

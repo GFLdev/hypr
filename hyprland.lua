@@ -489,6 +489,17 @@ hl.window_rule({
 -- })
 -- overlayLayerRule:set_enabled(false)
 
+-- hyprlauncher: blur behind its 0.8 background like kitty, skipping the
+-- transparent rounded corners, and pop in instead of the default layer fade
+hl.layer_rule({
+    name  = "hyprlauncher",
+    match = { namespace = "^hyprlauncher$" },
+
+    blur         = true,
+    ignore_alpha = 0.5,
+    animation    = "popin 90%",
+})
+
 -- Hyprland-run windowrule
 hl.window_rule({
     name  = "move-hyprland-run",

@@ -77,6 +77,18 @@ local wsOffset = { ["HDMI-A-1"] = 0, ["DVI-D-1"] = #wsNames }
 --   hl.exec_cmd("waybar & hyprpaper & firefox")
 -- end)
 
+-- No systemd user session here, so PipeWire has to be started by hand.
+-- WirePlumber and pipewire-pulse exit if the PipeWire socket isn't up yet,
+-- so wait for it before launching them.
+hl.on("hyprland.start", function ()
+    hl.exec_cmd([[
+        pgrep -x pipewire >/dev/null || pipewire &
+        for _ in $(seq 50); do [ -S "$XDG_RUNTIME_DIR/pipewire-0" ] && break; sleep 0.1; done
+        pgrep -x wireplumber >/dev/null || wireplumber &
+        pgrep -x pipewire-pulse >/dev/null || pipewire-pulse &
+    ]])
+end)
+
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----

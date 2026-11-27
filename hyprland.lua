@@ -129,7 +129,7 @@ end)
 
 -- Polkit agent, asks for the password when an app needs root (styled by hyprtoolkit.conf).
 -- No logind here: the agent only reads the session from XDG_SESSION_ID, so take it
--- from ConsoleKit2. Needs Hyprland started with `ck-launch-session start-hyprland`.
+-- from ConsoleKit2. Needs Hyprland started with `ck-launch-session dbus-run-session start-hyprland`.
 -- System setup for a new machine: docs/polkit.md
 hl.on("hyprland.start", function ()
     hl.exec_cmd([[

@@ -21,11 +21,13 @@ FreeBSD has no logind, so polkit uses ConsoleKit2 to find out which session an
 app belongs to. Start Hyprland from the tty as your user with:
 
 ```sh
-ck-launch-session start-hyprland
+ck-launch-session dbus-run-session start-hyprland
 ```
 
-Without it, the autostart in `hyprland.lua` can't find a session ID to give
-the agent, and polkit refuses every request.
+Without `ck-launch-session`, the autostart in `hyprland.lua` can't find a
+session ID to give the agent, and polkit refuses every request.
+`dbus-run-session` gives the session its own D-Bus session bus, which the bar
+needs to see media players (MPRIS).
 
 ## 3. Let polkitd see your processes
 

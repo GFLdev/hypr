@@ -138,9 +138,9 @@ hl.config({
 
         border_size = 2,
 
-        -- Monochrome palette, same as dwm SchemeSel / SchemeNorm borders
+        -- Monochrome palette (dwm SchemeNorm border) with the wallpaper's red as accent
         col = {
-            active_border   = "rgb(c0c0c0)",
+            active_border   = "rgb(ca1a1b)",
             inactive_border = "rgb(404040)",
         },
 

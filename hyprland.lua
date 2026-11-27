@@ -106,7 +106,11 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
+-- White cursor from ~/.icons/MonoIcons (XCursor only, hyprcursor falls back to it).
+-- Also set for GTK (gsettings, gtk-3.0/settings.ini) and X apps (~/.icons/default).
+hl.env("XCURSOR_THEME", "MonoIcons")
 hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_THEME", "MonoIcons")
 hl.env("HYPRCURSOR_SIZE", "24")
 
 

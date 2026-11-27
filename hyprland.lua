@@ -351,7 +351,7 @@ local mainMod = "SUPER" -- dwm MODKEY (Mod4Mask)
 hl.bind(mainMod .. " + D",              hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + Return",         hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " tmux"))
-hl.bind("Print", hl.dsp.exec_cmd("mkdir -p ~/Pictures && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"))
+hl.bind("Print", hl.dsp.exec_cmd('grim -g "$(slurp -d)" - | wl-copy'))
 
 -- Stack focus (focusstack), works in both master and monocle
 hl.bind(mainMod .. " + J", hl.dsp.layout("cyclenext"))

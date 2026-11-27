@@ -57,6 +57,10 @@ local terminal    = "kitty"
 local fileManager = "kitty nnn"
 local menu        = "hyprlauncher"
 
+-- Workspace names, shared by both monitors, and each monitor's first ID - 1
+local wsNames  = { "term", "code", "web", "chat", "misc" }
+local wsOffset = { ["HDMI-A-1"] = 0, ["DVI-D-1"] = #wsNames }
+
 
 -------------------
 ---- AUTOSTART ----
@@ -333,11 +337,19 @@ hl.bind(mainMod .. " + period",         hl.dsp.focus({ monitor = "+1" }))
 hl.bind(mainMod .. " + SHIFT + comma",  hl.dsp.window.move({ monitor = "-1" }))
 hl.bind(mainMod .. " + SHIFT + period", hl.dsp.window.move({ monitor = "+1" }))
 
--- Tags 1-10 (view / tag). Like dwm's tag, moving a window doesn't follow it.
-for i = 1, 10 do
-    local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = false }))
+-- Tags 1-5 (view / tag) on the focused monitor, like dwm's per-monitor tags.
+-- Like dwm's tag, moving a window doesn't follow it.
+local function wsOnFocusedMonitor(slot)
+    local monitor = hl.get_active_monitor()
+    return (monitor and wsOffset[monitor.name] or 0) + slot
+end
+for slot = 1, #wsNames do
+    hl.bind(mainMod .. " + " .. slot, function()
+        hl.dispatch(hl.dsp.focus({ workspace = wsOnFocusedMonitor(slot) }))
+    end)
+    hl.bind(mainMod .. " + SHIFT + " .. slot, function()
+        hl.dispatch(hl.dsp.window.move({ workspace = wsOnFocusedMonitor(slot), follow = false }))
+    end)
 end
 
 -- Quit
@@ -360,8 +372,8 @@ hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "m+1" }))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "m-1" }))
 
 -- Laptop multimedia keys for volume and LCD brightness
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
@@ -384,6 +396,20 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
+
+-- Per-monitor tags like dwm: each monitor owns five workspaces with the same
+-- names. HDMI-A-1 has IDs 1-5, DVI-D-1 has 6-10 (see wsOffset in MY PROGRAMS).
+for monitor, offset in pairs(wsOffset) do
+    for slot, name in ipairs(wsNames) do
+        hl.workspace_rule({
+            workspace    = tostring(offset + slot),
+            default_name = name,
+            monitor      = monitor,
+            default      = slot == 1,
+            persistent   = true,
+        })
+    end
+end
 
 -- Example window rules that are useful
 

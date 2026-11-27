@@ -338,11 +338,12 @@ hl.config({
 ---- INPUT ----
 ---------------
 
+-- Keyboard: Brazilian ABNT2 at the office, US international (dead keys for accents) at home
 hl.config({
     input = {
-        kb_layout  = "us",
-        kb_variant = "intl",
-        kb_model   = "",
+        kb_layout  = office and "br" or "us",
+        kb_variant = office and "" or "intl",
+        kb_model   = office and "abnt2" or "",
         kb_options = "",
         kb_rules   = "",
 

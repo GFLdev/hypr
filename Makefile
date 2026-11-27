@@ -7,8 +7,9 @@
 
 THEME        ?= MonoIcons
 CURSOR_SIZE  ?= 24
+COLOR_SCHEME ?= dark
 SCRIPTS_DIR  ?= scripts/icons
-SCRIPT_ENV   ?= THEME=$(THEME) CURSOR_SIZE=$(CURSOR_SIZE)
+SCRIPT_ENV   ?= THEME=$(THEME) CURSOR_SIZE=$(CURSOR_SIZE) COLOR_SCHEME=$(COLOR_SCHEME)
 
 HYPRCTL      ?= hyprctl
 HYPRLAUNCHER ?= hyprlauncher
@@ -46,12 +47,22 @@ icons-x: ## Apply the cursor and icons to X apps (~/.icons/default, ~/.Xresource
 	$(SCRIPT_ENV) $(SCRIPTS_DIR)/3-x.sh
 
 .PHONY: icons-gtk
-icons-gtk: ## Apply the cursor and icons to GTK apps (gsettings, settings.ini)
+icons-gtk: ## Apply the cursor, icons and COLOR_SCHEME to GTK apps (gsettings, settings.ini)
 	$(SCRIPT_ENV) $(SCRIPTS_DIR)/4-gtk.sh
 
 .PHONY: icons-qt
 icons-qt: ## Make Qt apps follow the GTK settings (run icons-gtk first)
 	$(SCRIPT_ENV) $(SCRIPTS_DIR)/5-qt.sh
+
+##@ Theme
+
+.PHONY: dark
+dark: ## Switch GTK and Qt apps to the dark color scheme
+	$(MAKE) icons-gtk COLOR_SCHEME=dark
+
+.PHONY: light
+light: ## Switch GTK and Qt apps to the light color scheme
+	$(MAKE) icons-gtk COLOR_SCHEME=light
 
 ##@ Hyprland
 

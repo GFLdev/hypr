@@ -138,9 +138,10 @@ hl.config({
 
         border_size = 2,
 
+        -- Monochrome palette, same as dwm SchemeSel / SchemeNorm borders
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = "rgb(c0c0c0)",
+            inactive_border = "rgb(404040)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -164,7 +165,7 @@ hl.config({
             enabled      = true,
             range        = 4,
             render_power = 3,
-            color        = 0xee1a1a1a,
+            color        = 0xee000000,
         },
 
         blur = {
@@ -260,6 +261,7 @@ hl.config({
     misc = {
         force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
         disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+        background_color        = 0x050505, -- dwm col_bg, shown behind/without a wallpaper
     },
 })
 

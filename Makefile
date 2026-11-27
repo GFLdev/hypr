@@ -81,6 +81,10 @@ launcher: ## Restart the hyprlauncher daemon (picks up hyprtoolkit.conf and icon
 	sleep 0.3
 	$(HYPRLAUNCHER) -d >/dev/null 2>&1 &
 
+.PHONY: lock
+lock: ## Lock the screen with hyprlock (same as SUPER + X)
+	pgrep -x hyprlock >/dev/null || hyprlock
+
 .PHONY: wallpaper
 wallpaper: ## Restart hyprpaper (picks up hyprpaper.conf changes)
 	-pkill -x $(HYPRPAPER)

@@ -1,0 +1,89 @@
+/* Styles for bar.py (GTK3 CSS) */
+
+@define-color fg     #f1f1f1;
+@define-color accent #ca1a1b; /* the wallpaper's red, as in hyprland.lua and hyprlock.conf */
+
+window.Bar {
+    background-color: transparent;
+    color: @fg;
+    /* Same font as kitty, hyprtoolkit.conf and hyprlock.conf */
+    font-family: "Iosevka Nerd Font Mono";
+    font-weight: 300; /* Light */
+    font-size: 110%;
+}
+
+/* Padding on the window itself is ignored, so it goes on the box inside */
+window.Bar > centerbox {
+    padding: 2px 16px;
+    /* 16px minus the workspace button's 2px margin and 12px padding, so the
+       first workspace name lines up with the clock's distance to the edge */
+    padding-left: 2px;
+}
+
+/* Keeps the text readable over bright wallpapers */
+window.Bar label {
+    text-shadow: 0 1px 3px alpha(black, 0.8);
+}
+
+.Workspaces button {
+    all: unset;
+    padding: 2px 12px;
+    margin: 0 2px;
+    border-radius: 6px;
+    color: @fg;
+    border: 1px solid transparent;
+    transition: 150ms;
+}
+
+/* Workspaces with windows are bold (below). Uncomment one option to mark them more. */
+
+/* B: faint white box
+.Workspaces button.occupied {
+    background-color: alpha(@fg, 0.12);
+}
+*/
+
+/* C: grey outline
+.Workspaces button.occupied {
+    border-color: alpha(@fg, 0.4);
+}
+*/
+
+/* D: empty ones dimmed instead, occupied stay white
+.Workspaces button {
+    color: alpha(@fg, 0.45);
+}
+.Workspaces button.occupied {
+    color: @fg;
+}
+*/
+
+/* Bold for workspaces with windows and the active one */
+.Workspaces button.occupied,
+.Workspaces button.active {
+    font-weight: bold;
+}
+
+.Workspaces button.active {
+    color: @accent;
+}
+
+/* Halfway to the active red, so hovering isn't mistaken for the active one */
+.Workspaces button:hover:not(.active) {
+    color: mix(@fg, @accent, 0.5);
+}
+
+.Battery {
+    margin-right: 16px;
+}
+
+/* A window asked for attention: blink red until it gets focused */
+@keyframes blink {
+    50% {
+        color: @accent;
+    }
+}
+
+.Workspaces button.urgent {
+    animation: blink 1s ease-in-out infinite;
+}

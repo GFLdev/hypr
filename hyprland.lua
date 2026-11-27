@@ -157,9 +157,9 @@ hl.config({
         rounding       = 4,
         rounding_power = 2,
 
-        -- Change transparency of focused and unfocused windows
+        -- picom active-opacity / inactive-opacity (firefox excluded, see window rules)
         active_opacity   = 1.0,
-        inactive_opacity = 1.0,
+        inactive_opacity = 0.8,
 
         shadow = {
             enabled      = true,
@@ -168,11 +168,16 @@ hl.config({
             color        = 0xee000000,
         },
 
+        -- picom dual_kawase blur, strength 5. Picom doesn't tint the blur,
+        -- so Hyprland's noise/contrast/brightness/vibrancy are neutralised.
         blur = {
-            enabled   = true,
-            size      = 3,
-            passes    = 1,
-            vibrancy  = 0.1696,
+            enabled    = true,
+            size       = 5,
+            passes     = 2,
+            noise      = 0,
+            contrast   = 1,
+            brightness = 1,
+            vibrancy   = 0,
         },
     },
 
@@ -441,6 +446,13 @@ hl.window_rule({
     name      = "firefox-web",
     match     = { class = "^[Ff]irefox$" },
     workspace = wsOffset["HDMI-A-1"] + 3 .. " silent",
+})
+
+-- picom opacity-exclude
+hl.window_rule({
+    name    = "firefox-opaque",
+    match   = { class = "^([Ff]irefox|firefox-esr|Firefox-esr|Navigator)$" },
+    opacity = "1.0 override 1.0 override",
 })
 
 -- Example window rules that are useful

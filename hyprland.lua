@@ -205,7 +205,7 @@ hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "
 hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
 -- workspacesIn/Out inherit this, so both workspaces slide in sync
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspaces",    enabled = true,  speed = 2.5,  bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/

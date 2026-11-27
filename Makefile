@@ -85,6 +85,12 @@ launcher: ## Restart the hyprlauncher daemon (picks up hyprtoolkit.conf and icon
 lock: ## Lock the screen with hyprlock (same as SUPER + X)
 	pgrep -x hyprlock >/dev/null || hyprlock
 
+.PHONY: bar
+bar: ## Restart the status bar (picks up astal/bar.py and astal/style.css changes)
+	-pkill -f 'python[0-9.]* .*astal/bar\.py'
+	sleep 0.3
+	astal/bar.py >/dev/null 2>&1 &
+
 .PHONY: wallpaper
 wallpaper: ## Restart hyprpaper (picks up hyprpaper.conf changes)
 	-pkill -x $(HYPRPAPER)

@@ -411,6 +411,19 @@ for monitor, offset in pairs(wsOffset) do
     end
 end
 
+-- dwm rules[]
+hl.window_rule({
+    name  = "gimp-float",
+    match = { class = "^[Gg]imp" },
+    float = true,
+})
+hl.window_rule({
+    -- "web" on the main monitor, without switching to it
+    name      = "firefox-web",
+    match     = { class = "^[Ff]irefox$" },
+    workspace = wsOffset["HDMI-A-1"] + 3 .. " silent",
+})
+
 -- Example window rules that are useful
 
 local suppressMaximizeRule = hl.window_rule({

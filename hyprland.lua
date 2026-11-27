@@ -112,6 +112,8 @@ hl.env("XCURSOR_THEME", "MonoIcons")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_THEME", "MonoIcons")
 hl.env("HYPRCURSOR_SIZE", "24")
+-- Qt apps take icons/cursor from the GTK settings (scripts/icons/5-qt.sh)
+hl.env("QT_QPA_PLATFORMTHEME", "gtk3")
 
 
 -----------------------

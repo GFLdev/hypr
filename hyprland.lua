@@ -94,6 +94,11 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("pgrep -x hyprpaper >/dev/null || hyprpaper")
 end)
 
+-- Launcher daemon, so SUPER + D opens instantly (config in hyprlauncher.conf)
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("pgrep -x hyprlauncher >/dev/null || hyprlauncher -d")
+end)
+
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----

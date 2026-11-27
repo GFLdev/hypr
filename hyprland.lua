@@ -22,22 +22,48 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
--- Mirrors the xrandr layout from dwm's autostart.sh:
--- DVI-D (1366x768, rotated left) sits left of HDMI-A (1920x1080, main).
-hl.monitor({
-    output    = "DVI-D-1",
-    mode      = "1366x768@59.79",
-    position  = "0x0",
-    scale     = 1,
-    transform = 1, -- 90°, matches `xrandr --rotate left` (3 came out upside down)
-})
+-- Same config on two machines, told apart by hostname. Both have HDMI-A-1 as
+-- the main monitor and a secondary one on its left.
+local hostnameCmd = io.popen("hostname -s")
+local office      = hostnameCmd:read("*l") == "calisto"
+hostnameCmd:close()
 
-hl.monitor({
-    output   = "HDMI-A-1",
-    mode     = "1920x1080@60",
-    position = "768x0", -- right of the rotated DVI-D (768px wide)
-    scale    = 1,
-})
+-- Secondary monitor, left of HDMI-A-1
+local secondary = office and "eDP-1" or "DVI-D-1"
+
+if office then
+    -- Office: laptop panel (1920x1200, not rotated) left of HDMI-A (1920x1080, main).
+    hl.monitor({
+        output   = "eDP-1",
+        mode     = "1920x1200@60",
+        position = "0x0",
+        scale    = 1,
+    })
+
+    hl.monitor({
+        output   = "HDMI-A-1",
+        mode     = "1920x1080@60",
+        position = "1920x0", -- right of the laptop panel
+        scale    = 1,
+    })
+else
+    -- Home: mirrors the xrandr layout from dwm's autostart.sh:
+    -- DVI-D (1366x768, rotated left) sits left of HDMI-A (1920x1080, main).
+    hl.monitor({
+        output    = "DVI-D-1",
+        mode      = "1366x768@59.79",
+        position  = "0x0",
+        scale     = 1,
+        transform = 1, -- 90°, matches `xrandr --rotate left` (3 came out upside down)
+    })
+
+    hl.monitor({
+        output   = "HDMI-A-1",
+        mode     = "1920x1080@60",
+        position = "768x0", -- right of the rotated DVI-D (768px wide)
+        scale    = 1,
+    })
+end
 
 -- Fallback for anything else plugged in
 hl.monitor({
@@ -60,7 +86,7 @@ local locker      = "pgrep -x hyprlock >/dev/null || hyprlock" -- config in hypr
 
 -- Workspace names, shared by both monitors, and each monitor's first ID - 1
 local wsNames  = { "term", "code", "web", "chat", "misc" }
-local wsOffset = { ["HDMI-A-1"] = 0, ["DVI-D-1"] = #wsNames }
+local wsOffset = { ["HDMI-A-1"] = 0, [secondary] = #wsNames }
 
 
 -------------------
@@ -454,7 +480,7 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 
 -- Per-monitor tags like dwm: each monitor owns five workspaces with the same
--- names. HDMI-A-1 has IDs 1-5, DVI-D-1 has 6-10 (see wsOffset in MY PROGRAMS).
+-- names. HDMI-A-1 has IDs 1-5, the secondary monitor has 6-10 (see wsOffset in MY PROGRAMS).
 for monitor, offset in pairs(wsOffset) do
     for slot, name in ipairs(wsNames) do
         hl.workspace_rule({

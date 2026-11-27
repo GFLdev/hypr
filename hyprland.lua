@@ -89,6 +89,11 @@ hl.on("hyprland.start", function ()
     ]])
 end)
 
+-- Wallpapers (config in hyprpaper.conf)
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("pgrep -x hyprpaper >/dev/null || hyprpaper")
+end)
+
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----

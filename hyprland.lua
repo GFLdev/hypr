@@ -360,6 +360,43 @@ hl.config({
     },
 })
 
+-- Touchpad off while typing. libinput's own disable_while_typing only pairs the
+-- touchpad with the built-in keyboard and doesn't kick in here, so do it by hand:
+-- any key press (modifiers aside, so SUPER + drag still works) turns the
+-- touchpad off until no key has been pressed for typingIdleMs.
+-- Device names from `hyprctl devices`.
+local touchpad     = office and "pnp0c50:08-0911:5289-touchpad" or nil
+local typingIdleMs = 500
+-- xkb keycodes of Ctrl, Shift, Alt, AltGr and Super
+local modifierKeys = { [37] = true, [50] = true, [62] = true, [64] = true,
+                       [105] = true, [108] = true, [133] = true, [134] = true }
+
+if touchpad then
+    local touchpadOff = false
+    local typingTimer -- made on the first key press, hl.timer crashes while the config loads
+
+    local function touchpadOn()
+        typingTimer:set_enabled(false)
+        touchpadOff = false
+        hl.device({ name = touchpad, enabled = true })
+    end
+
+    hl.on("input.keyboard.key", function (keycode, _, state)
+        if state ~= 1 or modifierKeys[keycode] then
+            return
+        end
+        if not touchpadOff then
+            touchpadOff = true
+            hl.device({ name = touchpad, enabled = false })
+        end
+        if typingTimer then
+            typingTimer:set_enabled(true) -- restarts the countdown
+        else
+            typingTimer = hl.timer(touchpadOn, { timeout = typingIdleMs, type = "repeat" })
+        end
+    end)
+end
+
 hl.gesture({
     fingers = 3,
     direction = "horizontal",

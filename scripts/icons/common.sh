@@ -1,7 +1,9 @@
-# Shared by the icon scripts (sourced, not run). Override THEME / CURSOR_SIZE from the env.
+# Shared by the icon scripts (sourced, not run). Override THEME / CURSOR_SIZE /
+# COLOR_SCHEME from the env.
 
 THEME=${THEME:-MonoIcons}
 CURSOR_SIZE=${CURSOR_SIZE:-24}
+COLOR_SCHEME=${COLOR_SCHEME:-dark} # dark or light (GTK, and Qt through GTK)
 
 REPO=witalihirsch/Mono-icon-theme
 BRANCH=main
@@ -10,6 +12,7 @@ REPO_DIR=MonoIcons # theme directory inside the repo
 HYPR_DIR=$(cd "$(dirname "$0")/../.." && pwd -P)
 ICONS_DIR=$HOME/.icons
 DATA_ICONS_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/icons
+DATA_THEMES_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/themes
 CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}
 
 log() { printf '%s: %s\n' "${0##*/}" "$*"; }

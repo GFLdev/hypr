@@ -1,6 +1,6 @@
 #!/bin/sh
 # 5 - Qt apps: Qt's gtk3 platform theme (part of qt6-base), so Qt takes the icon
-#     and cursor theme from GTK's settings. Run 4-gtk.sh first.
+#     and cursor theme and the light/dark colors from GTK's settings. Run 4-gtk.sh first.
 set -eu
 . "$(dirname "$0")/common.sh"
 theme_installed

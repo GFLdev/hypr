@@ -284,45 +284,84 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 
-local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+local mainMod = "SUPER" -- dwm MODKEY (Mod4Mask)
 
--- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
--- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+-- Mirrors the keys[] / buttons[] tables in ~/Repos/dwm/config.h.
+
+-- Programs
+hl.bind(mainMod .. " + D",              hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + Return",         hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " tmux"))
+hl.bind("Print", hl.dsp.exec_cmd("mkdir -p ~/Pictures && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"))
+
+-- Stack focus (focusstack), works in both master and monocle
+hl.bind(mainMod .. " + J", hl.dsp.layout("cyclenext"))
+hl.bind(mainMod .. " + K", hl.dsp.layout("cycleprev"))
+
+-- Master count (incnmaster) and size (setmfact)
+hl.bind(mainMod .. " + SHIFT + I", hl.dsp.layout("addmaster"))
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.layout("removemaster"))
+hl.bind(mainMod .. " + H",         hl.dsp.layout("mfact -0.05"), { repeating = true })
+hl.bind(mainMod .. " + L",         hl.dsp.layout("mfact +0.05"), { repeating = true })
+
+-- Previous workspace (view {0})
+hl.bind(mainMod .. " + Tab", hl.dsp.focus({ workspace = "previous" }))
+
+-- Kill client
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
+
+-- Layouts (setlayout): T tile, M monocle, Space back to the previous one.
+-- Unlike dwm this is global rather than per monitor.
+local prevLayout = "master"
+local function setLayout(layout)
+    local current = hl.get_config("general.layout")
+    if layout ~= current then
+        prevLayout = current
+        hl.config({ general = { layout = layout } })
+    end
+end
+hl.bind(mainMod .. " + T",     function() setLayout("master") end)
+hl.bind(mainMod .. " + M",     function() setLayout("monocle") end)
+hl.bind(mainMod .. " + space", function() setLayout(prevLayout) end)
+
+-- Toggle floating
+hl.bind(mainMod .. " + SHIFT + space", hl.dsp.window.float({ action = "toggle" }))
+
+-- Monitors (focusmon / tagmon)
+hl.bind(mainMod .. " + comma",          hl.dsp.focus({ monitor = "-1" }))
+hl.bind(mainMod .. " + period",         hl.dsp.focus({ monitor = "+1" }))
+hl.bind(mainMod .. " + SHIFT + comma",  hl.dsp.window.move({ monitor = "-1" }))
+hl.bind(mainMod .. " + SHIFT + period", hl.dsp.window.move({ monitor = "+1" }))
+
+-- Tags 1-10 (view / tag). Like dwm's tag, moving a window doesn't follow it.
+for i = 1, 10 do
+    local key = i % 10 -- 10 maps to key 0
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = false }))
+end
+
+-- Quit
+hl.bind(mainMod .. " + F4", hl.dsp.exit())
+
+-- Mouse (buttons[]): move, toggle floating, resize
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:274", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Extras with no dwm counterpart (none clash with the binds above)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("hyprctl reload"))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
--- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
--- Switch workspaces with mainMod + [0-9]
--- Move active window to a workspace with mainMod + SHIFT + [0-9]
-for i = 1, 10 do
-    local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
-    hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
-end
-
--- Example special workspace (scratchpad)
 hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
--- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
-
--- Move/resize windows with mainMod + LMB/RMB and dragging
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })

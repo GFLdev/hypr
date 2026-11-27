@@ -355,6 +355,7 @@ hl.config({
 
         touchpad = {
             natural_scroll = true,
+            scroll_factor  = 0.7, -- a bit slower than the default 1.0
         },
     },
 })

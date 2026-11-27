@@ -349,11 +349,12 @@ hl.config({
 
         follow_mouse = 1,
 
+        -- No acceleration, for mice and touchpads alike
         accel_profile = "flat",
         sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
 
         touchpad = {
-            natural_scroll = false,
+            natural_scroll = true,
         },
     },
 })

@@ -88,6 +88,12 @@ local locker      = "pgrep -x hyprlock >/dev/null || hyprlock" -- config in hypr
 local wsNames  = { "term", "code", "web", "chat", "misc" }
 local wsOffset = { ["HDMI-A-1"] = 0, [secondary] = #wsNames }
 
+-- With HDMI-A-1 unplugged (the office laptop on its own) the remaining monitor
+-- is the main one: it gets workspaces 1-5 (see WINDOWS AND WORKSPACES)
+local function mainUnplugged()
+    return hl.get_monitor("HDMI-A-1") == nil
+end
+
 
 -------------------
 ---- AUTOSTART ----
@@ -421,6 +427,9 @@ hl.bind(mainMod .. " + SHIFT + period", hl.dsp.window.move({ monitor = "+1" }))
 -- Tags 1-5 (view / tag) on the focused monitor, like dwm's per-monitor tags.
 -- Like dwm's tag, moving a window doesn't follow it.
 local function wsOnFocusedMonitor(slot)
+    if mainUnplugged() then
+        return slot
+    end
     local monitor = hl.get_active_monitor()
     return (monitor and wsOffset[monitor.name] or 0) + slot
 end
@@ -492,6 +501,35 @@ for monitor, offset in pairs(wsOffset) do
         })
     end
 end
+
+-- HDMI-A-1 unplugged: Hyprland moves workspaces 1-5 to the remaining monitor,
+-- which takes over as the main one. Its windows from 6-10 move to the same
+-- slot in 1-5 (nothing is left out of SUPER + 1-5) and it shows that slot.
+local function takeOverMain()
+    local slots = #wsNames
+    for _, window in ipairs(hl.get_windows()) do
+        local id = window.workspace and window.workspace.id
+        if id and id > slots and id <= 2 * slots then
+            hl.dispatch(hl.dsp.window.move({ workspace = id - slots, follow = false, window = window }))
+        end
+    end
+    local active = hl.get_active_workspace()
+    local id     = active and active.id or 1
+    hl.dispatch(hl.dsp.focus({ workspace = (id >= 1 and id <= 2 * slots) and (id - 1) % slots + 1 or 1 }))
+end
+
+hl.on("monitor.removed", function (monitor)
+    if monitor.name == "HDMI-A-1" then
+        takeOverMain()
+    end
+end)
+
+-- Started without HDMI-A-1
+hl.on("hyprland.start", function ()
+    if mainUnplugged() then
+        takeOverMain()
+    end
+end)
 
 -- dwm rules[]
 hl.window_rule({

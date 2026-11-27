@@ -151,6 +151,12 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("pgrep -x hyprlauncher >/dev/null || hyprlauncher -d")
 end)
 
+-- Status bar, one per monitor (astal/bar.py, styled by astal/style.css)
+hl.on("hyprland.start", function ()
+    -- Matches python running the script, not e.g. an editor that has it open
+    hl.exec_cmd("pgrep -f 'python[0-9.]* .*astal/bar\\.py' >/dev/null || ~/.config/hypr/astal/bar.py")
+end)
+
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
